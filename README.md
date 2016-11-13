@@ -27,8 +27,8 @@ powerful stacked error handling system.
      ```php
      'WhoopsErrorHandler',   // must be added as the first module
      ```
-  6. copy `config/module.config.php` in `my/project/directory/config/autoload/zf3-whoops.local.php`
-  7. edit `my/project/directory/config/autoload/zf3-whoops.local.php`
+  6. optional : copy `config/module.config.php` in `my/project/directory/config/autoload/zf3-whoops.local.php`
+  7. optional : edit `my/project/directory/config/autoload/zf3-whoops.local.php`
   
   
 
