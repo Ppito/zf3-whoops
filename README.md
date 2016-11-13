@@ -1,4 +1,4 @@
-# WIP!!! - Whoops-ZF3, integrated [whoops](https://github.com/filp/whoops) in ZF3 Framework
+# Whoops-ZF3, integrated [whoops](https://github.com/filp/whoops) in ZF3 Framework
 
 -----
 
@@ -15,7 +15,7 @@ powerful stacked error handling system.
      ```json
      {
          "require": {
-             "ppito/zf3-whoops": "dev-master"
+             "ppito/zf3-whoops": "^1.0"
          }
      }
      ```

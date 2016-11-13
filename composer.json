@@ -1,7 +1,7 @@
 {
   "name": "ppito/zf3-whoops",
   "description": "PHP whoops error on framework ZF3",
-  "version": "0.1.0-dev",
+  "version": "1.0.0",
   "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/ppito/zf3-whoops",

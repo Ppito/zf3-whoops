@@ -18,6 +18,7 @@ use Zend\Http\Response;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceManager;
 
@@ -25,6 +26,13 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
 
     /** @var \Whoops\Run */
     protected $whoops;
+
+    /**
+     * Return default zend-serializer configuration for zend-mvc applications.
+     */
+    public function getConfig() {
+        return include __DIR__ . '/../config/module.config.php';
+    }
 
     /**
      * Listen to the bootstrap event
@@ -98,18 +106,34 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      * @param MvcEvent $e
      */
     public function prepareException(MvcEvent $e) {
-        /** @var Response $response */
-        $response = $e->getResponse();
-        if (!$response || $response->getStatusCode() === 200) {
-            header('HTTP/1.0 500 Internal Server Error', true, 500);
+        // Do nothing if no error in the event
+        $error = $e->getError();
+        if (empty($error)) {
+            return;
         }
-        $this->whoops->handleException($e->getParam('exception'));
-    }
 
-    /**
-     * Return default zend-serializer configuration for zend-mvc applications.
-     */
-    public function getConfig() {
-        return include __DIR__ . '/../config/module.config.php';
+        // Do nothing if the result is a response object
+        $result = $e->getResult();
+        if ($result instanceof Response) {
+            return;
+        }
+
+        switch ($error) {
+            case Application::ERROR_CONTROLLER_NOT_FOUND:
+            case Application::ERROR_CONTROLLER_INVALID:
+            case Application::ERROR_ROUTER_NO_MATCH:
+                // Specifically not handling these
+                return;
+
+            case Application::ERROR_EXCEPTION:
+            default:
+                /** @var Response $response */
+                $response = $e->getResponse();
+                if (!$response || $response->getStatusCode() === 200) {
+                    header('HTTP/1.0 500 Internal Server Error', true, 500);
+                }
+                die($this->whoops->handleException($e->getParam('exception')));
+                break;
+        }
     }
 }
