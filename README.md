@@ -1,4 +1,4 @@
-# Whoops-ZF3, integrated [whoops](https://github.com/filp/whoops) in ZF3 Framework
+# ZF3-Whoops, integrated [whoops](https://github.com/filp/whoops) in ZF3 Framework
 
 -----
 
