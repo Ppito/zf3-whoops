@@ -1,4 +1,4 @@
-# Whoops-ZF3, integrated [whoops](https://github.com/filp/whoops) in ZF3 Framework
+# WIP!!! - Whoops-ZF3, integrated [whoops](https://github.com/filp/whoops) in ZF3 Framework
 
 -----
 
@@ -27,12 +27,12 @@ powerful stacked error handling system.
      ```php
      'WhoopsErrorHandler',   // must be added as the first module
      ```
-  6. copy `config/zf3-whoops.local.php` in `my/project/directory/config/autoload`
+  6. copy `config/module.config.php` in `my/project/directory/config/autoload/zf3-whoops.local.php`
   7. edit `my/project/directory/config/autoload/zf3-whoops.local.php`
   
   
 
 ## License
 
-**ppito/zf3-whoops** is licensed under the New BSD License - See the [LICENSE](LICENSE) file for details.
+**ppito/zf3-whoops** is licensed under the MIT License - See the [LICENSE](LICENSE.md) file for details.
 
