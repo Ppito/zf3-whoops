@@ -1,20 +1,24 @@
 <?php
 /**
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * Created by PhpStorm.
+ * User: Ppito
+ * Date: 11/12/2016
+ * Time: 1:12 PM
+ *
+ * @link      https://github.com/Ppito/zf3-whoops for the canonical source repository
+ * @copyright Copyright (c) 2016 Mickael TONNELIER.
+ * @license   https://github.com/Ppito/zf3-whoops/blob/master/LICENSE.md The MIT License
  */
 
 namespace WhoopsErrorHandler;
 
-use Whoops\Run as Whoops;
+use Interop\Container\ContainerInterface;
+use Whoops\Handler\Handler;
 use Whoops\Util\Misc;
-use Whoops\Handler\JsonResponseHandler as WhoopsAjaxHandler;
-use Whoops\Handler\PlainTextHandler as WhoopsConsoleHandler;
-use Whoops\Handler\PrettyPageHandler as WhoopsPageHandler;
+use Whoops\Run as Whoops;
 
-use Zend\EventManager\EventInterface;
 use Zend\Http\Response;
+use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
@@ -38,66 +42,69 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      * Listen to the bootstrap event
      *
      * @param \Zend\Mvc\MvcEvent|EventInterface $e
-     *
-     * @return array
+     * @return void
      */
     public function onBootstrap(EventInterface $e) {
-        $application  = $e->getApplication();
 
+        $application  = $e->getApplication();
         /** @var ServiceManager $serviceManager */
         $serviceManager = $application->getServiceManager();
-        $config         = $serviceManager->get('Config');
-        $config         = isset($config['whoops']) ? $config['whoops'] : [];
 
         $this->whoops = new Whoops();
         $this->whoops->writeToOutput(false);
         $this->whoops->allowQuit(false);
-        $this->registerHandler($config);
-        $this->whoops->register();
 
+        if ($this->registerHandler($serviceManager)) {
+            $this->whoops->register();
 
-        $eventManager = $application->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [
-            $this,
-            'prepareException',
-        ]);
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [
-            $this,
-            'prepareException',
-        ]);
+            $eventManager = $application->getEventManager();
+            $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [
+                $this,
+                'prepareException',
+            ]);
+            $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [
+                $this,
+                'prepareException',
+            ]);
+        }
     }
 
     /**
-     * Configure Handler
+     * Register Handler
      *
-     * @param array $config
+     * @param ContainerInterface $container
+     * @return Whoops|null
+     * @throws \InvalidArgumentException if not an instance of \Whoops\Handler\Handler
      */
-    private function registerHandler(array $config) {
+    private function registerHandler(ContainerInterface $container) {
 
         if (Misc::isAjaxRequest()) {
-            $handler = new WhoopsAjaxHandler();
-
-            if (isset($config['show_trace']) && isset($config['show_trace']['ajax_display'])) {
-                $handler->addTraceToOutput($config['show_trace']['ajax_display']);
-            }
-
-            $handler->setJsonApi(true);
+            $handler = $container->has('WhoopsErrorHandler\Handler\Ajax')
+                ? $container->get('WhoopsErrorHandler\Handler\Ajax')
+                : null;
         } elseif (Misc::isCommandLine()) {
-            $handler = new WhoopsConsoleHandler();
-
-            if (isset($config['show_trace']) && isset($config['show_trace']['cli_display'])) {
-                $handler->addTraceToOutput($config['show_trace']['cli_display']);
-            }
+            $handler = $container->has('WhoopsErrorHandler\Handler\Console')
+                ? $container->get('WhoopsErrorHandler\Handler\Console')
+                : null;
         } else {
-            $handler = new WhoopsPageHandler();
-
-            $handler->setApplicationPaths([__FILE__]);
-
-            if (isset($config['editor'])) {
-                $handler->setEditor($config['editor']);
-            }
+            $handler = $container->has('WhoopsErrorHandler\Handler\Page')
+                ? $container->get('WhoopsErrorHandler\Handler\Page')
+                : null;
         }
-        $this->whoops->pushHandler($handler);
+
+        // Do nothing if no handler found
+        if (is_null($handler)) {
+            return null;
+        }
+
+        if (!$handler instanceof Handler) {
+            throw new \InvalidArgumentException(sprintf(
+                'The register handler must be an instance of \Whoops\Handler\Handler; received "%s"',
+                (is_object($handler) ? get_class($handler) : gettype($handler))
+            ));
+        }
+
+        return $this->whoops->pushHandler($handler);
     }
 
     /**
@@ -106,6 +113,7 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      * @param MvcEvent $e
      */
     public function prepareException(MvcEvent $e) {
+
         // Do nothing if no error in the event
         $error = $e->getError();
         if (empty($error)) {
