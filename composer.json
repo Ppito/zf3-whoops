@@ -25,7 +25,8 @@
   },
   "autoload": {
     "psr-4": {
-      "WhoopsErrorHandler\\": "src/"
+      "WhoopsErrorHandler\\": "src/",
+      "WhoopsErrorHandler\\Container\\": "Container/"
     }
   }
 }

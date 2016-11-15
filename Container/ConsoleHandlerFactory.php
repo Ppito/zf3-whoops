@@ -15,16 +15,19 @@ namespace WhoopsErrorHandler\Container;
 use Interop\Container\ContainerInterface;
 use Whoops\Handler\Handler;
 use Whoops\Handler\PlainTextHandler as WhoopsConsoleHandler;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
-class ConsoleHandlerFactory {
+class ConsoleHandlerFactory implements FactoryInterface  {
 
     /**
      * Invoke Console Handler
      *
      * @param ContainerInterface $container
+     * @param string             $requestedName
+     * @param null|array         $options
      * @returns Handler
      */
-    public function __invoke(ContainerInterface $container) {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
 
         $config = $container->has('config') ? $container->get('config') : [];
         $config = isset($config['whoops']) ? $config['whoops'] : [];
