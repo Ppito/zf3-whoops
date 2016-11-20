@@ -1,7 +1,7 @@
 {
   "name": "ppito/zf3-whoops",
   "description": "ZF3-Whoops, integrated whoops in ZF3 Framework",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "type": "module",
   "license": "MIT License",
   "homepage": "https://github.com/ppito/zf3-whoops",
