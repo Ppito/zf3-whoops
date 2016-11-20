@@ -13,7 +13,6 @@
 namespace WhoopsErrorHandler;
 
 use Interop\Container\ContainerInterface;
-use Whoops\Handler\Handler;
 use Whoops\Util\Misc;
 use Whoops\Run as Whoops;
 
@@ -79,25 +78,26 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
     private function registerHandler(ContainerInterface $container) {
 
         if (Misc::isAjaxRequest()) {
-            $handler = $container->has('WhoopsErrorHandler\Handler\Ajax')
-                ? $container->get('WhoopsErrorHandler\Handler\Ajax')
+            $service = $container->has(Handler\AjaxHandler::class)
+                ? $container->get(Handler\AjaxHandler::class)
                 : null;
         } elseif (Misc::isCommandLine()) {
-            $handler = $container->has('WhoopsErrorHandler\Handler\Console')
-                ? $container->get('WhoopsErrorHandler\Handler\Console')
+            $service = $container->has(Handler\ConsoleHandler::class)
+                ? $container->get(Handler\ConsoleHandler::class)
                 : null;
         } else {
-            $handler = $container->has('WhoopsErrorHandler\Handler\Page')
-                ? $container->get('WhoopsErrorHandler\Handler\Page')
+            $service = $container->has(Handler\PageHandler::class)
+                ? $container->get(Handler\PageHandler::class)
                 : null;
         }
 
-        // Do nothing if no handler found
-        if (is_null($handler)) {
+        // Do nothing if the service not found
+        if (is_null($service)) {
             return null;
         }
 
-        if (!$handler instanceof Handler) {
+        $handler = $service->getHandler();
+        if (!$handler instanceof \Whoops\Handler\Handler) {
             throw new \InvalidArgumentException(sprintf(
                 'The register handler must be an instance of \Whoops\Handler\Handler; received "%s"',
                 (is_object($handler) ? get_class($handler) : gettype($handler))

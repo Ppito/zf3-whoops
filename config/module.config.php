@@ -9,10 +9,10 @@ return [
         ],
     ],
     'service_manager' => [
-        'invokables' => [
-            'WhoopsErrorHandler\Handler\Page' => WhoopsErrorHandler\Container\PageHandlerFactory::class,
-            'WhoopsErrorHandler\Handler\Console' => WhoopsErrorHandler\Container\ConsoleHandlerFactory::class,
-            'WhoopsErrorHandler\Handler\Ajax' => WhoopsErrorHandler\Container\AjaxHandlerFactory::class,
+        'factories' => [
+            WhoopsErrorHandler\Handler\PageHandler::class    => WhoopsErrorHandler\Factory\HandlerFactory::class,
+            WhoopsErrorHandler\Handler\ConsoleHandler::class => WhoopsErrorHandler\Factory\HandlerFactory::class,
+            WhoopsErrorHandler\Handler\AjaxHandler::class    => WhoopsErrorHandler\Factory\HandlerFactory::class,
         ],
     ],
 ];
