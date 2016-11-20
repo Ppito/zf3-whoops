@@ -15,7 +15,7 @@ namespace WhoopsErrorHandler\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class HandlerFactory implements FactoryInterface  {
+class Factory implements FactoryInterface  {
 
     /**
      * Invoke Handler

@@ -13,9 +13,7 @@
 namespace WhoopsErrorHandler;
 
 use Interop\Container\ContainerInterface;
-use Whoops\Util\Misc;
-use Whoops\Run as Whoops;
-
+use WhoopsErrorHandler\Service\WhoopsService;
 use Zend\Http\Response;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -24,8 +22,13 @@ use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceManager;
+use Zend\View\Model\ConsoleModel;
+use Zend\Http\Response as HttpResponse;
 
 class Module implements ConfigProviderInterface, BootstrapListenerInterface {
+
+    /** @var string */
+    protected $template = 'zf3_whoops/simple_error';
 
     /** @var \Whoops\Run */
     protected $whoops;
@@ -45,17 +48,13 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      */
     public function onBootstrap(EventInterface $e) {
 
-        $application  = $e->getApplication();
+        $application = $e->getApplication();
         /** @var ServiceManager $serviceManager */
         $serviceManager = $application->getServiceManager();
 
-        $this->whoops = new Whoops();
-        $this->whoops->writeToOutput(false);
-        $this->whoops->allowQuit(false);
+        $this->configureService($serviceManager);
 
-        if ($this->registerHandler($serviceManager)) {
-            $this->whoops->register();
-
+        if ($this->whoops) {
             $eventManager = $application->getEventManager();
             $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [
                 $this,
@@ -69,42 +68,24 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
     }
 
     /**
-     * Register Handler
+     * Configure Whoops Service
      *
-     * @param ContainerInterface $container
-     * @return Whoops|null
-     * @throws \InvalidArgumentException if not an instance of \Whoops\Handler\Handler
+     * @param \Interop\Container\ContainerInterface $container
      */
-    private function registerHandler(ContainerInterface $container) {
+    protected function configureService(ContainerInterface $container) {
+        $config = $container->has('config') ? $container->get('config') : [];
+        $config = isset($config['whoops']) ? $config['whoops'] : [];
 
-        if (Misc::isAjaxRequest()) {
-            $service = $container->has(Handler\AjaxHandler::class)
-                ? $container->get(Handler\AjaxHandler::class)
-                : null;
-        } elseif (Misc::isCommandLine()) {
-            $service = $container->has(Handler\ConsoleHandler::class)
-                ? $container->get(Handler\ConsoleHandler::class)
-                : null;
-        } else {
-            $service = $container->has(Handler\PageHandler::class)
-                ? $container->get(Handler\PageHandler::class)
-                : null;
+        if (isset($config['template_render'])) {
+            $this->setTemplate($config['template_render']);
         }
 
-        // Do nothing if the service not found
-        if (is_null($service)) {
-            return null;
-        }
+        /** @var Service\WhoopsService $service */
+        $service = $container->has(Service\WhoopsService::class) ?
+            $container->get(Service\WhoopsService::class) :
+            null;
 
-        $handler = $service->getHandler();
-        if (!$handler instanceof \Whoops\Handler\Handler) {
-            throw new \InvalidArgumentException(sprintf(
-                'The register handler must be an instance of \Whoops\Handler\Handler; received "%s"',
-                (is_object($handler) ? get_class($handler) : gettype($handler))
-            ));
-        }
-
-        return $this->whoops->pushHandler($handler);
+        $this->whoops = $service->getService();
     }
 
     /**
@@ -135,13 +116,46 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
 
             case Application::ERROR_EXCEPTION:
             default:
-                /** @var Response $response */
+                $result = $this->whoops->handleException($e->getParam('exception'));
+                $model  = new ConsoleModel([
+                    'result' => $result,
+                ]);
+
+                $model->setTemplate($this->getTemplate());
+                $e->setResult($model);
+
                 $response = $e->getResponse();
-                if (!$response || $response->getStatusCode() === 200) {
-                    header('HTTP/1.0 500 Internal Server Error', true, 500);
+                if (!$response) {
+                    $response = new HttpResponse();
+                    $response->setStatusCode(500);
+                    $e->setResponse($response);
+                } else {
+                    $statusCode = $response->getStatusCode();
+                    if ($statusCode === 200) {
+                        $response->setStatusCode(500);
+                    }
                 }
-                die($this->whoops->handleException($e->getParam('exception')));
                 break;
         }
+    }
+
+    /**
+     * Set Template
+     *
+     * @param string $template
+     * @return self
+     */
+    public function setTemplate($template) {
+        $this->template = $template;
+        return $this;
+    }
+
+    /**
+     * Retrieve the template
+     *
+     * @return string
+     */
+    public function getTemplate() {
+        return $this->template;
     }
 }

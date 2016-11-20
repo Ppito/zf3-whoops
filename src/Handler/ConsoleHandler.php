@@ -22,10 +22,10 @@ class ConsoleHandler extends HandlerAbstract
      * ConsoleHandler constructor.
      *
      * @param \Interop\Container\ContainerInterface $container
-     * @param null                                  $options
+     * @param array                                 $options
      * @return self
      */
-    public function __construct(ContainerInterface $container, $options = null) {
+    public function __construct(ContainerInterface $container, $options = []) {
 
         parent::__construct($container, $options);
         $this->handler = new WhoopsConsoleHandler();

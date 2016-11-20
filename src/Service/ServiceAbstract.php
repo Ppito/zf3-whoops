@@ -10,18 +10,20 @@
  * @license   https://github.com/Ppito/zf3-whoops/blob/master/LICENSE.md The MIT License
  */
 
-namespace WhoopsErrorHandler\Handler;
+namespace WhoopsErrorHandler\Service;
 
 use Interop\Container\ContainerInterface;
 
-abstract class HandlerAbstract {
+abstract class ServiceAbstract {
 
     /** @var array|null */
     protected $options = [];
     /** @var ContainerInterface */
     protected $container;
-    /** @var \Whoops\Handler\HandlerInterface */
-    protected $handler;
+    /** @var \Whoops\RunInterface|null */
+    protected $service = null;
+    /** @var \Zend\EventManager\EventManager|null  */
+    protected $eventManager = null;
 
     /**
      * HandlerAbstract constructor.
@@ -31,8 +33,11 @@ abstract class HandlerAbstract {
      * @return self
      */
     public function __construct(ContainerInterface $container, $options = []) {
-        $this->options   = $options;
-        $this->container = $container;
+        $this->options      = $options;
+        $this->container    = $container;
+        $this->eventManager = $container->has('EventManager') ?
+            $container->get('EventManager') :
+            null;
         return $this;
     }
 
@@ -59,9 +64,9 @@ abstract class HandlerAbstract {
     }
 
     /**
-     * @return \Whoops\Handler\HandlerInterface
+     * @return \Whoops\RunInterface
      */
-    public function getHandler() {
-        return $this->handler;
+    public function getService() {
+        return $this->service;
     }
 }

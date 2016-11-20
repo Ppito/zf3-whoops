@@ -12,7 +12,6 @@
 
 namespace WhoopsErrorHandler\Handler;
 
-
 interface HandlerInterface {
 
     /**
