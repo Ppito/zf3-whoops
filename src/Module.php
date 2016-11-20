@@ -85,7 +85,9 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
             $container->get(Service\WhoopsService::class) :
             null;
 
-        $this->whoops = $service->getService();
+        if ($service) {
+            $this->whoops = $service->getService();
+        }
     }
 
     /**
