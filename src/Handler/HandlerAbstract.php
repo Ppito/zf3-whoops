@@ -12,51 +12,13 @@
 
 namespace WhoopsErrorHandler\Handler;
 
-use Interop\Container\ContainerInterface;
+use WhoopsErrorHandler\Service\ServiceAbstract;
 
-abstract class HandlerAbstract {
+abstract class HandlerAbstract extends ServiceAbstract
+    implements HandlerInterface {
 
-    /** @var array|null */
-    protected $options = [];
-    /** @var ContainerInterface */
-    protected $container;
     /** @var \Whoops\Handler\HandlerInterface */
     protected $handler;
-
-    /**
-     * HandlerAbstract constructor.
-     *
-     * @param \Interop\Container\ContainerInterface $container
-     * @param array                                 $options
-     * @return self
-     */
-    public function __construct(ContainerInterface $container, $options = []) {
-        $this->options   = $options;
-        $this->container = $container;
-        return $this;
-    }
-
-    /**
-     * Configure Service Handler
-     *
-     * @return void
-     */
-    abstract public function configure();
-
-
-    /**
-     * @return array|null
-     */
-    public function getOptions() {
-        return $this->options;
-    }
-
-    /**
-     * @return \Interop\Container\ContainerInterface
-     */
-    public function getContainer() {
-        return $this->container;
-    }
 
     /**
      * @return \Whoops\Handler\HandlerInterface

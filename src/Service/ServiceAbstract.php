@@ -20,8 +20,6 @@ abstract class ServiceAbstract {
     protected $options = [];
     /** @var ContainerInterface */
     protected $container;
-    /** @var \Whoops\RunInterface|null */
-    protected $service = null;
     /** @var \Zend\EventManager\EventManager|null  */
     protected $eventManager = null;
 
@@ -48,7 +46,6 @@ abstract class ServiceAbstract {
      */
     abstract public function configure();
 
-
     /**
      * @return array|null
      */
@@ -61,12 +58,5 @@ abstract class ServiceAbstract {
      */
     public function getContainer() {
         return $this->container;
-    }
-
-    /**
-     * @return \Whoops\RunInterface
-     */
-    public function getService() {
-        return $this->service;
     }
 }

@@ -21,8 +21,8 @@ use Zend\Http\Response as HttpResponse;
 
 class WhoopsService extends ServiceAbstract {
 
-    /** @var string */
-    protected $template = 'zf3_whoops/simple_error';
+    /** @var \Whoops\RunInterface|null */
+    protected $service = null;
 
     /**
      * WhoopsService constructor.
@@ -46,7 +46,7 @@ class WhoopsService extends ServiceAbstract {
         $this->service->writeToOutput(false);
         $this->service->allowQuit(false);
 
-        if ($this->registerHandler($this->container)) {
+        if ($this->registerHandler($this->getContainer())) {
             $this->service->register();
         } else {
             $this->service = null;
@@ -94,5 +94,12 @@ class WhoopsService extends ServiceAbstract {
         }
 
         return $this->service->pushHandler($handler);
+    }
+
+    /**
+     * @return \Whoops\RunInterface
+     */
+    public function getService() {
+        return $this->service;
     }
 }

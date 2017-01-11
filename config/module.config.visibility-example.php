@@ -8,7 +8,8 @@ return [
             'cli_display'  => true,
         ],
         'template_render'         => 'zf3_whoops/simple_error',
-        'visibility_service_name' => null,
+        // Specify the class name
+        'visibility_service_name' => Application\Service\VisibilityService::class,
     ],
 
     'service_manager' => [
@@ -17,6 +18,8 @@ return [
             WhoopsErrorHandler\Handler\PageHandler::class    => WhoopsErrorHandler\Factory\Factory::class,
             WhoopsErrorHandler\Handler\ConsoleHandler::class => WhoopsErrorHandler\Factory\Factory::class,
             WhoopsErrorHandler\Handler\AjaxHandler::class    => WhoopsErrorHandler\Factory\Factory::class,
+            // register visibility class
+            Application\Service\VisibilityService::class  => WhoopsErrorHandler\Factory\Factory::class,
         ],
     ],
 

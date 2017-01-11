@@ -13,7 +13,6 @@
 namespace WhoopsErrorHandler;
 
 use Interop\Container\ContainerInterface;
-use WhoopsErrorHandler\Service\WhoopsService;
 use Zend\Http\Response;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -75,6 +74,20 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
     protected function configureService(ContainerInterface $container) {
         $config = $container->has('config') ? $container->get('config') : [];
         $config = isset($config['whoops']) ? $config['whoops'] : [];
+
+        $serviceName = array_key_exists('visibility_service_name', $config) && !empty($config['visibility_service_name']) ?
+            $config['visibility_service_name'] :
+            null;
+        /** @var Service\VisibilityServiceInterface $visibilityService */
+        $visibilityService = $serviceName && $container->has($serviceName) ?
+            $container->get($serviceName) :
+            null;
+
+        if ($visibilityService instanceof Service\VisibilityServiceInterface) {
+            if (!$visibilityService->canAttachEvent()) {
+                return ;
+            }
+        }
 
         if (isset($config['template_render'])) {
             $this->setTemplate($config['template_render']);
