@@ -60,17 +60,16 @@ There is now possible to manage the module loading by implement your own rules.
 For example, the module can be loaded only for the admin users or only for dev&preprod environments.
 
 ##### Usage :
-* Create your own class by implement the interface `VisibilityServiceInterface` (or the abstract `VisibilityServiceAbstract`)
-    * @see example `VisibilityService.visibility-example.php`.
+* Create your own class by implement the interface [VisibilityServiceInterface](src/Service/VisibilityServiceInterface.php) (or the abstract [VisibilityServiceAbstract](src/Service/VisibilityServiceAbstract.php))
+    * @see example [VisibilityService.visibility-example.php](src/Service/VisibilityService.visibility-example.php).
 * Change the `visibility_service_name` configuration to specify the name of your class. 
-    * @see example `module.config.visibility-example.php`.
+    * @see example [module.config.visibility-example.php](config/module.config.visibility-example.php).
     ```php
     'visibility_service_name' => Application\Service\VisibilityService::class,
     ```
 
 
-License
--------
+# License
 
 **ppito/zf3-whoops** is licensed under the MIT License - See the [LICENSE](LICENSE.md) file for details.
 
