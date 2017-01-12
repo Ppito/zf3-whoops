@@ -17,7 +17,7 @@ interface VisibilityServiceInterface {
     /**
      * Verify if the module can be loaded
      *
-     * @return mixed
+     * @return boolean
      */
     public function canAttachEvent();
 }

@@ -36,7 +36,7 @@ class VisibilityService extends VisibilityServiceAbstract
     /**
      * Verify the role of the user
      *
-     * @return mixed
+     * @return boolean
      */
     public function canAttachEvent() {
         return $this->connectedUser ?

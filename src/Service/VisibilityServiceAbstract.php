@@ -18,7 +18,7 @@ abstract class VisibilityServiceAbstract extends ServiceAbstract
     /**
      * Verify if the module can be loaded
      *
-     * @return mixed
+     * @return boolean
      */
     abstract public function canAttachEvent();
 }
