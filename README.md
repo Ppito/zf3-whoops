@@ -56,7 +56,7 @@ By default this module use the simple php render, but you can now specify your f
 # Module Visibility Manager 
 ###### (zf3-whoops >= 1.3.0)
 
-There is now possible to manage the module loading by implement your own rules.
+It is now possible to manage the module loading by implement your own rules.
 For example, the module can be loaded only for the admin users or only for dev&preprod environments.
 
 ##### Usage :
