@@ -139,6 +139,7 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
                 $model->setTemplate($this->getTemplate());
                 $e->setResult($model);
 
+                /** @var HttpResponse $response */
                 $response = $e->getResponse();
                 if (!$response) {
                     $response = new HttpResponse();

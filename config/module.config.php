@@ -1,5 +1,7 @@
 <?php
 
+namespace WhoopsErrorHandler;
+
 return [
     'whoops' => [
         'editor'                  => 'phpstorm',
@@ -13,10 +15,10 @@ return [
 
     'service_manager' => [
         'factories' => [
-            WhoopsErrorHandler\Service\WhoopsService::class  => WhoopsErrorHandler\Factory\Factory::class,
-            WhoopsErrorHandler\Handler\PageHandler::class    => WhoopsErrorHandler\Factory\Factory::class,
-            WhoopsErrorHandler\Handler\ConsoleHandler::class => WhoopsErrorHandler\Factory\Factory::class,
-            WhoopsErrorHandler\Handler\AjaxHandler::class    => WhoopsErrorHandler\Factory\Factory::class,
+            Service\WhoopsService::class  => Factory\Factory::class,
+            Handler\PageHandler::class    => Factory\Factory::class,
+            Handler\ConsoleHandler::class => Factory\Factory::class,
+            Handler\AjaxHandler::class    => Factory\Factory::class,
         ],
     ],
 

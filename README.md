@@ -2,7 +2,7 @@
 
 -----
 
-![Whoops!](http://i.imgur.com/xiZ1tUU.png)
+![Whoops!](http://i.imgur.com/0VQpe96.png)
 
 **whoops** is an error handler base/framework for PHP. Out-of-the-box, it provides a pretty
 error interface that helps you debug your web projects, but at heart it's a simple yet
@@ -25,7 +25,7 @@ powerful stacked error handling system.
      ```json
      {
          "require": {
-             "ppito/zf3-whoops": "^1.2"
+             "ppito/zf3-whoops": "^1.3"
          }
      }
      ```
@@ -53,7 +53,7 @@ By default this module use the simple php render, but you can now specify your f
 'template_render' => 'zf3_whoops/twig_error',
 ```
 
-# Module Visibility Manager 
+### Module Visibility Manager 
 ###### (zf3-whoops >= 1.3.0)
 
 It is now possible to manage the module loading by implement your own rules.

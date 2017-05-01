@@ -1,5 +1,9 @@
 <?php
 
+namespace WhoopsErrorHandler;
+
+use Application\Service\VisibilityService;
+
 return [
     'whoops' => [
         'editor'                  => 'phpstorm',
@@ -9,17 +13,17 @@ return [
         ],
         'template_render'         => 'zf3_whoops/simple_error',
         // Specify the class name
-        'visibility_service_name' => Application\Service\VisibilityService::class,
+        'visibility_service_name' => VisibilityService::class,
     ],
 
     'service_manager' => [
         'factories' => [
-            WhoopsErrorHandler\Service\WhoopsService::class  => WhoopsErrorHandler\Factory\Factory::class,
-            WhoopsErrorHandler\Handler\PageHandler::class    => WhoopsErrorHandler\Factory\Factory::class,
-            WhoopsErrorHandler\Handler\ConsoleHandler::class => WhoopsErrorHandler\Factory\Factory::class,
-            WhoopsErrorHandler\Handler\AjaxHandler::class    => WhoopsErrorHandler\Factory\Factory::class,
+            Service\WhoopsService::class  => Factory\Factory::class,
+            Handler\PageHandler::class    => Factory\Factory::class,
+            Handler\ConsoleHandler::class => Factory\Factory::class,
+            Handler\AjaxHandler::class    => Factory\Factory::class,
             // register visibility class
-            Application\Service\VisibilityService::class  => WhoopsErrorHandler\Factory\Factory::class,
+            VisibilityService::class  => Factory\Factory::class,
         ],
     ],
 

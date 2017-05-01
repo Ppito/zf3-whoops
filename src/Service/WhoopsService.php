@@ -17,8 +17,6 @@ use Interop\Container\ContainerInterface;
 use Whoops\Util\Misc;
 use Whoops\Run as Whoops;
 
-use Zend\Http\Response as HttpResponse;
-
 class WhoopsService extends ServiceAbstract {
 
     /** @var \Whoops\RunInterface|null */
