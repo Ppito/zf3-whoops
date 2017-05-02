@@ -41,7 +41,11 @@ class WhoopsService extends ServiceAbstract {
      * Configure Whoops service
      */
     public function configure() {
-        $this->service->writeToOutput(false);
+        /**
+         * Keep this method to true, in case of error
+         * was launched without to be catch be ZF3
+         */
+        $this->service->writeToOutput(true);
         $this->service->allowQuit(false);
 
         if ($this->registerHandler($this->getContainer())) {
