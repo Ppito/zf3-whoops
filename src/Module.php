@@ -131,8 +131,8 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
 
             case Application::ERROR_EXCEPTION:
             default:
-                // Set writeToOutput to false for rendered output with zend-view
-                $this->whoops->writeToOutput(false);
+                // Set writeToOutput to false for rendered output with zend-view if not in CLI mode
+                $this->whoops->writeToOutput(php_sapi_name() === "cli");
                 $result = $this->whoops->handleException($e->getParam('exception'));
                 $model  = new ConsoleModel([
                     'result' => $result,
