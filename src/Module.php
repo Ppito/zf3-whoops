@@ -23,6 +23,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\Model\ConsoleModel;
 use Zend\Http\Response as HttpResponse;
+use Zend\Console\Response as ConsoleResponse;
 
 class Module implements ConfigProviderInterface, BootstrapListenerInterface {
 
@@ -141,16 +142,25 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
                 $model->setTemplate($this->getTemplate());
                 $e->setResult($model);
 
-                /** @var HttpResponse $response */
                 $response = $e->getResponse();
-                if (!$response) {
-                    $response = new HttpResponse();
-                    $response->setStatusCode(500);
-                    $e->setResponse($response);
-                } else {
-                    $statusCode = $response->getStatusCode();
-                    if ($statusCode === 200) {
-                        $response->setStatusCode(500);
+                if ($response instanceof HttpResponse) {
+                    if ($response->isSuccess()) {
+                        $response->setStatusCode(HttpResponse::STATUS_CODE_500);
+                    }
+                } elseif ($response instanceof ConsoleResponse) {
+                    $statusCode = $response->getErrorLevel();
+                    if ($statusCode === 0) {
+                        $response->setErrorLevel(E_ERROR);
+                    }
+                } elseif (!$response) {
+                    if (class_exists(HttpResponse::class)) {
+                        $response = new HttpResponse();
+                        $response->setStatusCode(HttpResponse::STATUS_CODE_500);
+                        $e->setResponse($response);
+                    } elseif (class_exists(ConsoleResponse::class)) {
+                        $response = new ConsoleResponse();
+                        $response->setErrorLevel(E_ERROR);
+                        $e->setResponse($response);
                     }
                 }
                 break;
